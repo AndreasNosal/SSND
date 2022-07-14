@@ -1,9 +1,9 @@
 # SSND
-╔═════════════════════════════════╗ 
+╔════════════════════════════╗ 
 
 ║    Repository for school projects.    ║ 
 
-╚═════════════════════════════════╝
+╚════════════════════════════╝
 
 Naming format: n_[LECTURE_NUM].[LECTURE-NAME].[DATE].cpp
 
