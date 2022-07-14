@@ -1,7 +1,7 @@
 # SSND
 ╔═════════════════════════════════╗ 
 
-║ Repository for school projects. ║ 
+║    Repository for school projects.    ║ 
 
 ╚═════════════════════════════════╝
 
