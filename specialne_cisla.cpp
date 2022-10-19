@@ -38,7 +38,7 @@ int main() {
             }
         }
 
-        if (1000 == i) { std::cout << "Nenasiel" << std::endl; } // no matching number
+        if (974 == i) { std::cout << "Nenasiel" << std::endl; } // no matching number
     }
 
     return 0;
