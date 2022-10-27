@@ -113,6 +113,16 @@ int main() {
                                     game.signature[7] = 'O';
                                     polozil = true;
                                 }
+                                else if (!polozil) {
+                                    for (int c = 0; c < 9; c++) { // no more tactical places
+                                        if (!game.place[c]) {
+                                            game.place[c] = true;
+                                            game.signature[c] = 'O';
+                                            polozil = true;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             else {                      // if position 5 is taken by X
                                 if (!game.place[0] && !polozil) {
