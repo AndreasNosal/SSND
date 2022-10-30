@@ -124,10 +124,10 @@ void AI_tic_tac_toe(char &temp, int& j, int& l, int &pocet, bool &polozil, int &
                 game.place[4] = true;           // most important position '5'
                 game.signature[4] = 'O';
                 polozil = true;
-            } else if (game.place[4] && game.signature[4] == 'O') { // if position 5 is taken by O
-                if (!game.place[5] && !polozil) {
-                    game.place[5] = true;
-                    game.signature[5] = 'O';
+            } else if (game.signature[4] == 'O') { // if position 5 is taken by O
+                if (!game.place[2] && !polozil) {
+                    game.place[2] = true;
+                    game.signature[2] = 'O';
                     polozil = true;
                 }
                 else if (!game.place[3] && !polozil) {
