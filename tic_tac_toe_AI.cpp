@@ -22,7 +22,7 @@ struct tic_tac_toe {
 };
 
 void table(struct tic_tac_toe& game);
-void AI_tic_tac_toe(char &temp, int& j, int& l, int &pocet, bool &polozil, int &kontrolovanie , struct tic_tac_toe& game);
+void AI_tic_tac_toe(int &pocet, bool &polozil, struct tic_tac_toe& game);
 
 int main() {
 
@@ -43,23 +43,23 @@ int main() {
         //if (i > 4) { break; } // game begins here, four times
         if (!koniec) {
 
-                while (true) { // input
-                    std::cout << "Zadaj volnu poziciu [1-9] pre X: ";
-                    std::cin >> hodnota;
-                    if (!game.place[hodnota - 1] && (9 >= hodnota && hodnota > 0)) {
-                        game.place[hodnota - 1] = true;
-                        game.signature[hodnota - 1] = 'X';
-                        break;
-                    }
+            while (true) { // input
+                std::cout << "Zadaj volnu poziciu [1-9] pre X: ";
+                std::cin >> hodnota;
+                if (!game.place[hodnota - 1] && (9 >= hodnota && hodnota > 0)) {
+                    game.place[hodnota - 1] = true;
+                    game.signature[hodnota - 1] = 'X';
+                    break;
                 }
-                std::cout << std::endl;
+            }
+            std::cout << std::endl;
 
             polozil = false; // must be set to false, after AI has chosen the place
 
             for (int k = 0; k < 2; k++) { // swaping character
                 if (ukoncenie) { break; } // ends cycle
-                else if (k == 0) { temp = 'X'; } // character swap
-                else { temp = 'O'; }
+                else if (k == 0) { temp = 'O'; } // character swap
+                else { temp = 'X'; }
 
                 for (int j = 0; j < 8; j++) { // 8 masks
                     int kontrolovanie = game.mask[j];
@@ -69,7 +69,7 @@ int main() {
                     for (int l = 0; l < 9; l++) {
                         if (game.signature[l] == temp) {                            // checks for same character
                             if ((game.mask[j] ^ game.points[l]) < game.mask[j]) {   // mask matches if lower (0)
-                                if (temp == 'X') { pocet++; } // warning for AI
+                                pocet++;  // warning for AI
                                 kontrolovanie = (kontrolovanie ^ game.points[l]);
                                 if (kontrolovanie == 0) { // mask matches with location of character (X,O)
                                     koniec = true;
@@ -78,13 +78,44 @@ int main() {
                                 }
                             }
                         }
+                        if (temp == 'X') {
+                            if (pocet == 2 && !polozil) { // if warning 2, algorithm tries to block the player (from win)
+                                for (int p = 0; p < 9; p++) {
+                                    if (0 == (game.points[p] ^ kontrolovanie)) {
+                                        if (!game.place[p]) {
+                                            game.place[p] = true;
+                                            game.signature[p] = 'O';
+                                            polozil = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
-                        // AI algorithm
-                        AI_tic_tac_toe(temp, j, l, pocet, polozil, kontrolovanie , game);
+                        else {
+                            if (pocet == 2 && !polozil) { // if warning 2, algorithm tries to WIN
+                                for (int p = 0; p < 9; p++) {
+                                    if (0 == (game.points[p] ^ kontrolovanie)) {
+                                        if (!game.place[p]) {
+                                            game.place[p] = true;
+                                            game.signature[p] = 'O';
+
+                                            polozil = true;
+                                            koniec = true;
+                                            ukoncenie = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+        // AI algorithm
+        AI_tic_tac_toe(pocet, polozil, game);
     }
 
     if (koniec) { // end title
@@ -103,79 +134,83 @@ void table(struct tic_tac_toe& game) { //function for printing table
     std::cout << std::endl;
 }
 
-void AI_tic_tac_toe(char &temp, int& j, int& l, int &pocet, bool &polozil, int &kontrolovanie , struct tic_tac_toe& game) {
+void AI_tic_tac_toe(int &pocet, bool &polozil, struct tic_tac_toe& game) {
     // AI algorithm
-    if (temp == 'X') {
-
-        if (pocet == 2 && !polozil) { // if warning 2, algorithm tries to block the player (from win)
-            for (int p = 0; p < 9; p++) {
-                if (0 == (game.points[p] ^ kontrolovanie)) {
-                    if (!game.place[p]) {
-                        game.place[p] = true;
-                        game.signature[p] = 'O';
-                        polozil = true;
-                        break;
-                    }
+    // all masks checked
+    if (!game.place[4] && !polozil) {   // checks if most important position is empty
+        game.place[4] = true;           // most important position '5'
+        game.signature[4] = 'O';
+        polozil = true;
+    }
+    else if (game.signature[4] == 'O') { // if position 5 is taken by O
+        if (((game.signature[0] == 'X') || (game.signature[8] == 'X')) && !polozil) {
+            if (!game.place[5]) {
+                game.place[5] = true;
+                game.signature[5] = 'O';
+                polozil = true;
+            }
+            else if (!game.place[7]) {
+                game.place[7] = true;
+                game.signature[7] = 'O';
+                polozil = true;
+            }
+        }
+        if ((game.signature[3] == 'X') || (game.signature[8] == 'X') && !polozil) {
+            if (!game.place[0]) {
+                game.place[0] = true;
+                game.signature[0] = 'O';
+                polozil = true;
+            }
+            else if (!game.place[8]) {
+                game.place[8] = true;
+                game.signature[8] = 'O';
+                polozil = true;
+            }
+        }
+        else if (!game.place[1] && !polozil) {
+            game.place[1] = true;
+            game.signature[1] = 'O';
+            polozil = true;
+        }
+        else if (!game.place[7] && !polozil) {
+            game.place[7] = true;
+            game.signature[7] = 'O';
+            polozil = true;
+        }
+        else if (!polozil) {
+            for (int c = 0; c < 9; c++) { // no more tactical places
+                if (!game.place[c]) {
+                    game.place[c] = true;
+                    game.signature[c] = 'O';
+                    polozil = true;
+                    break;
                 }
             }
         }
-        if (j == 7 && l == 8) { // all masks checked
-            if (!game.place[4] && !polozil) {   // checks if most important position is empty
-                game.place[4] = true;           // most important position '5'
-                game.signature[4] = 'O';
-                polozil = true;
-            } else if (game.signature[4] == 'O') { // if position 5 is taken by O
-                if (!game.place[2] && !polozil) {
-                    game.place[2] = true;
-                    game.signature[2] = 'O';
+    }
+    else {                      // if position 5 is taken by X
+        if (!game.place[0] && !polozil) {
+            game.place[0] = true;
+            game.signature[0] = 'O';
+            polozil = true;
+        }
+        else if (!game.place[2] && !polozil) {
+            game.place[2] = true;
+            game.signature[2] = 'O';
+            polozil = true;
+        }
+        else if (!game.place[8] && !polozil) {
+            game.place[8] = true;
+            game.signature[8] = 'O';
+            polozil = true;
+        }
+        else if (!polozil) {
+            for (int c = 0; c < 9; c++) { // no more tactical places
+                if (!game.place[c]) {
+                    game.place[c] = true;
+                    game.signature[c] = 'O';
                     polozil = true;
-                }
-                else if (!game.place[3] && !polozil) {
-                    game.place[3] = true;
-                    game.signature[3] = 'O';
-                    polozil = true;
-                }
-                else if (!game.place[7] && !polozil) {
-                    game.place[7] = true;
-                    game.signature[7] = 'O';
-                    polozil = true;
-                }
-                else if (!polozil) {
-                    for (int c = 0; c < 9; c++) { // no more tactical places
-                        if (!game.place[c]) {
-                            game.place[c] = true;
-                            game.signature[c] = 'O';
-                            polozil = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            else {                      // if position 5 is taken by X
-                if (!game.place[0] && !polozil) {
-                    game.place[0] = true;
-                    game.signature[0] = 'O';
-                    polozil = true;
-                }
-                else if (!game.place[2] && !polozil) {
-                    game.place[2] = true;
-                    game.signature[2] = 'O';
-                    polozil = true;
-                }
-                else if (!game.place[8] && !polozil) {
-                    game.place[8] = true;
-                    game.signature[8] = 'O';
-                    polozil = true;
-                }
-                else if (!polozil) {
-                    for (int c = 0; c < 9; c++) { // no more tactical places
-                        if (!game.place[c]) {
-                            game.place[c] = true;
-                            game.signature[c] = 'O';
-                            polozil = true;
-                            break;
-                        }
-                    }
+                    break;
                 }
             }
         }
